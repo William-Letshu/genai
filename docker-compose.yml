@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:17.7
+    container_name: genai_postgres
+    restart: unless-stopped
+    env_file:
+      - .env    
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-genai}
+      POSTGRES_USER: ${POSTGRES_USER:-genai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-genai}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend/db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
